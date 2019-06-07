@@ -49,8 +49,6 @@ server.get('/actions/:id', async (req, res) => {
 });
 
 
-
-
 server.post('/actions',  async (req, res) => {
     const { description, notes, project_id } = req.body;
     if (!project_id || !description || !notes) {
@@ -73,6 +71,36 @@ server.post('/actions',  async (req, res) => {
             error: "There was an error while saving the user to the database",
           });
         });
+});
+
+// Alternation post solution
+// server.post('/actions',  async (req, res) => {
+//     if (!req.body.description || !req.body.description === '') {
+//         res.status(400).json({message:'Please provide valid name'})
+//     }
+//     try {
+//         const action = await Actions.insert({description: req.body.description, notes: req.body.notes, project_id: req.body.project_id});
+//         res.status(201).json(action);
+//     } catch (error) {
+//         console.log(error)
+//         res.status(500).json({message:'error adding the action!'});
+//     }
+// });
+
+// uncomment and try alt code only original doesn't work
+
+server.delete('/actions/:id', async (req, res) => {
+    try {
+        const count = await Actions.remove(req.params.id);
+        if (count > 0) {
+            res.status(200).json({message: "The user has been deleted"});
+        } else {
+            res.status(404).json({message: "The user with the specified ID does not exist."});
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message: 'error removing the user.'});
+    }
 });
 
 module.exports = server;
