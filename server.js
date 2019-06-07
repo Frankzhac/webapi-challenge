@@ -157,7 +157,7 @@ server.get('/projects/:id/actions', async (req,res) => {
         console.log(err);
         res.status(500).json({ message: 'Error finding the project' });
     }
-})
+});
 
 server.post('/projects', async (req, res) => {
     if (!req.body.name || req.body.name === '' || !req.body.description) {
@@ -187,5 +187,18 @@ server.delete('/projects/:id', async (req, res) => {
     }
 });
 
+server.put('/projects/:id', async (req, res) => {
+    try {
+        const project = await Projects.update(req.params.id, req.body);
+        if(project) {
+            res.status(200).json(project);
+        }else {
+            res.status(404).json({message: 'project could not be found'});
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message: 'error updating the project.'});
+    }
+});
 
 module.exports = server;
