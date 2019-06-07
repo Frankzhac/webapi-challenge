@@ -9,12 +9,12 @@ const server = express();
 server.use(helmet());
 server.use(express.json());
 
-const Actions = require('./data/helpers/actionModel');
+const Actions = require('./data/helpers/actionModel'); //importing actionModel and assigning it as a variable "Actions".
 const Projects = require('./data/helpers/projectModel');
 
 // server check
 server.get('/', (req, res) => {
-  res.status(200).json({ hello: 'World!' });
+  res.send('Hello Word'); // It's preferable to send a string for the browser and json for data
 });
 
 // ActionModel endpoint start below
@@ -50,17 +50,15 @@ server.get('/actions/:id', async (req, res) => {
 
 
 server.post('/actions',  async (req, res) => {
-    const { description, notes, project_id } = req.body;
+    const { description, notes, project_id } = req.body; //deconstruction taking in each value
     if (!project_id || !description || !notes) {
         res.status(400).json({ message: "Please provide name, notes and project Id for the user"})
     }
 
     // add/save new user in the actions db
-    Actions.insert({
-      project_id,
-      description,
-      notes
-    })
+    Actions.insert(
+      req.body
+    )
         .then(response => {
           res.status(201).json(response);
         })
@@ -75,11 +73,11 @@ server.post('/actions',  async (req, res) => {
 
 // Alternation post solution
 // server.post('/actions',  async (req, res) => {
-//     if (!req.body.description || req.body.description === '' !req.body.notes || !req.body.project_id) {
+//     if (!req.body.description || req.body.description === '') {
 //         res.status(400).json({message:'Please provide valid name'})
 //     }
 //     try {
-//         const action = await Actions.insert({description: req.body.description, notes: req.body.notes, project_id: req.body.project_id});
+//         const action = await Actions.insert(req.body);
 //         res.status(201).json(action);
 //     } catch (error) {
 //         console.log(error)
