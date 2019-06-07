@@ -75,7 +75,7 @@ server.post('/actions',  async (req, res) => {
 
 // Alternation post solution
 // server.post('/actions',  async (req, res) => {
-//     if (!req.body.description || !req.body.description === '') {
+//     if (!req.body.description || req.body.description === '' !req.body.notes || !req.body.project_id) {
 //         res.status(400).json({message:'Please provide valid name'})
 //     }
 //     try {
@@ -144,5 +144,19 @@ server.get('/projects/:id', async (req, res) => {
         res.status(500).json({message:'error getting the project!'});
     }
 });
+
+server.post('/projects', async (req, res) => {
+    if (!req.body.name || req.body.name === '' || !req.body.description) {
+        res.status(400).json({message:'Please provide valid text and user id'})
+    }
+    try {
+        const project = await Projects.insert({name: req.body.name, description: req.body.description});
+        res.status(201).json(project);
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message:'error adding the post!'});
+    }
+});
+
 
 module.exports = server;
