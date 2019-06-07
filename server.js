@@ -97,8 +97,8 @@ server.delete('/actions/:id', async (req, res) => {
         } else {
             res.status(404).json({message: "The user with the specified ID does not exist."});
         }
-    } catch (error) {
-        console.log(error)
+    } catch (err) {
+        console.log(err);
         res.status(500).json({message: 'error removing the user.'});
     }
 });
@@ -111,8 +111,8 @@ server.put('/actions/:id', async (req, res) => {
         }else {
             res.status(404).json({message: 'could not be found'});
         }
-    } catch (error) {
-        console.log(error)
+    } catch (err) {
+        console.log(err);
         res.status(500).json({message: 'error updating the action.'});
     }
 });
@@ -125,8 +125,8 @@ server.get('/projects', async (req, res) => {
     try {
         const projects = await Projects.get();
         res.status(200).json(projects);
-    }catch (error) {
-        console.log(error);
+    }catch (err) {
+        console.log(err);
         res.status(500).json({message:'error getting the project!'});
     }
 });
@@ -139,11 +139,25 @@ server.get('/projects/:id', async (req, res) => {
         } else {
             res.status(404).json({message: 'project not found'});
         }
-    }catch (error) {
-        console.log(error);
+    }catch (err) {
+        console.log(err);
         res.status(500).json({message:'error getting the project!'});
     }
 });
+
+server.get('/projects/:id/actions', async (req,res) => {
+    try {
+        const project = await Projects.getProjectActions(req.params.id);
+        if(project) {
+            res.status(200).json(project);
+        } else {
+            res.status(404).json({ message: 'project not found' });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: 'Error finding the project' });
+    }
+})
 
 server.post('/projects', async (req, res) => {
     if (!req.body.name || req.body.name === '' || !req.body.description) {
@@ -152,9 +166,24 @@ server.post('/projects', async (req, res) => {
     try {
         const project = await Projects.insert({name: req.body.name, description: req.body.description});
         res.status(201).json(project);
-    } catch (error) {
-        console.log(error)
+    } catch (err) {
+        console.log(err)
         res.status(500).json({message:'error adding the post!'});
+    }
+});
+
+
+server.delete('/projects/:id', async (req, res) => {
+    try {
+        const count = await Projects.remove(req.params.id);
+        if (count > 0) {
+            res.status(200).json({message: 'The project has been deleted'});
+        } else {
+            res.status(404).json({message: 'The project could not be found'});
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({message: 'error removing the project.'});
     }
 });
 
