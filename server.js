@@ -17,7 +17,7 @@ server.get('/', (req, res) => {
   res.status(200).json({ hello: 'World!' });
 });
 
-// Endpoint actions start below
+// Actions endpoint start below
 
 server.get('/actions', async (req, res) => {
     try {
@@ -46,6 +46,33 @@ server.get('/actions/:id', async (req, res) => {
         console.log(err);
         res.status(500).json({message:'error getting the action!'});
     }
+});
+
+
+
+
+server.post('/actions',  async (req, res) => {
+    const { description, notes, project_id } = req.body;
+    if (!project_id || !description || !notes) {
+        res.status(400).json({ message: "Please provide name, notes and project Id for the user"})
+    }
+
+    // add/save new user in the actions db
+    Actions.insert({
+      project_id,
+      description,
+      notes
+    })
+        .then(response => {
+          res.status(201).json(response);
+        })
+        .catch(err => {
+          // console.log(err);
+          res.status(500).json({
+            success: false,
+            error: "There was an error while saving the user to the database",
+          });
+        });
 });
 
 module.exports = server;
