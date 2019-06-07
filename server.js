@@ -17,7 +17,7 @@ server.get('/', (req, res) => {
   res.status(200).json({ hello: 'World!' });
 });
 
-// Actions endpoint start below
+// ActionModel endpoint start below
 
 server.get('/actions', async (req, res) => {
     try {
@@ -100,6 +100,48 @@ server.delete('/actions/:id', async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({message: 'error removing the user.'});
+    }
+});
+
+server.put('/actions/:id', async (req, res) => {
+    try {
+        const action = await Actions.update(req.params.id, req.body);
+        if(action) {
+            res.status(200).json(action);
+        }else {
+            res.status(404).json({message: 'could not be found'});
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message: 'error updating the action.'});
+    }
+});
+
+
+// ActionModel endpoint end here and Projects Models endpoint start
+
+// GET
+server.get('/projects', async (req, res) => {
+    try {
+        const projects = await Projects.get();
+        res.status(200).json(projects);
+    }catch (error) {
+        console.log(error);
+        res.status(500).json({message:'error getting the project!'});
+    }
+});
+
+server.get('/projects/:id', async (req, res) => {
+    try {
+        const project = await Projects.get(req.params.id);
+        if (project) {
+            res.status(200).json(project);
+        } else {
+            res.status(404).json({message: 'project not found'});
+        }
+    }catch (error) {
+        console.log(error);
+        res.status(500).json({message:'error getting the project!'});
     }
 });
 
